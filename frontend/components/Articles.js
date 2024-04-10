@@ -1,12 +1,29 @@
-import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import PT from 'prop-types';
+import React, { useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
+import PT from 'prop-types'
+import { axiosWithAuth } from '../axios/index'
 
-export default function Articles({ articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId }) {
+const Articles = ({ articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId }) => {
   useEffect(() => {
-    // Grab the articles here, on first render only
-    getArticles();
-  }, []); // Run this effect only once on initial render
+    // Fetch articles on initial render
+    fetchArticles();
+  }, []); // Run this effect whenever getArticles changes
+
+  const fetchArticles = () => {
+    axiosWithAuth()
+      .get('http://localhost:9000/api/articles')
+      .then((response) => {
+        getArticles(response.data); // Update articles state with fetched data
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          // Redirect to login if token is invalid or expired
+          return <Navigate to="/" />;
+        } else {
+          console.error('Error fetching articles:', error);
+        }
+      });
+  };
 
   // If no token exists, render a Navigate to the login screen
   if (!localStorage.getItem('token')) {
@@ -34,11 +51,12 @@ export default function Articles({ articles, getArticles, deleteArticle, setCurr
           ))
       }
     </div>
-  );
+  )
 }
 
+// 🔥 No touchy: Articles expects the following props exactly:
 Articles.propTypes = {
-  articles: PT.arrayOf(PT.shape({
+  articles: PT.arrayOf(PT.shape({ // the array can be empty
     article_id: PT.number.isRequired,
     title: PT.string.isRequired,
     text: PT.string.isRequired,
@@ -48,4 +66,6 @@ Articles.propTypes = {
   deleteArticle: PT.func.isRequired,
   setCurrentArticleId: PT.func.isRequired,
   currentArticleId: PT.number, // can be undefined or null
-};
+}
+
+export default Articles
