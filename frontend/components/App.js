@@ -5,7 +5,7 @@ import LoginForm from './LoginForm';
 import Message from './Message';
 import ArticleForm from './ArticleForm';
 import Spinner from './Spinner';
-import { axiosWithAuth } from '../axios/index';
+import axios,{ axiosWithAuth } from '../axios/index';
 
 const articlesUrl = 'http://localhost:9000/api/articles';
 const loginUrl = 'http://localhost:9000/api/login';
@@ -13,9 +13,28 @@ const loginUrl = 'http://localhost:9000/api/login';
 export default function App() {
   const [message, setMessage] = useState('');
   const [articles, setArticles] = useState([]);
-  const [currentArticleId, setCurrentArticleId] = useState();
   const [spinnerOn, setSpinnerOn] = useState(false);
   const navigate = useNavigate();
+
+  const postArticle = async (article) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:9000/api/articles', article, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      // Handle the response here
+      console.log(response.data);
+    } catch (error) {
+      // Handle errors here
+      console.error('Error posting article:', error);
+    }
+  };
+
+  const setCurrentArticleId = (id) => {
+    // Implement the logic to set the current article ID
+  };
 
   const redirectToLogin = () => {
     navigate('/');
@@ -79,81 +98,14 @@ export default function App() {
     }
   };
 
-  const postArticle = async (article) => {
-    // Implement postArticle
-    setMessage('');
-  setSpinnerOn(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      await getArticles();
+    };
 
-  try {
-    const response = await axiosWithAuth().post(articlesUrl, article);
+    fetchData();
+  }, []);
 
-    if (response.data.article) {
-      setArticles([...articles, response.data.article]);
-      setMessage(response.data.message);
-    } else {
-      setMessage(response.data.message);
-    }
-  } catch (error) {
-    setMessage('An error occurred while posting the article.');
-  } finally {
-    setSpinnerOn(false);
-  }
-};
-
-  const updateArticle = async ({ article_id, article }) => {
-    // Implement updateArticle
-    setMessage('');
-  setSpinnerOn(true);
-
-  try {
-    const response = await axiosWithAuth().put(`${articlesUrl}/${article_id}`, article);
-
-    if (response.data.article) {
-      const updatedArticles = articles.map((item) => {
-        if (item.id === article_id) {
-          return response.data.article;
-        }
-        return item;
-      });
-      setArticles(updatedArticles);
-      setMessage(response.data.message);
-    } else {
-      setMessage(response.data.message);
-    }
-  } catch (error) {
-    setMessage('An error occurred while updating the article.');
-  } finally {
-    setSpinnerOn(false);
-  }
-};
-
-  const deleteArticle = async (article_id) => {
-    // Implement deleteArticle
-    setMessage('');
-  setSpinnerOn(true);
-
-  try {
-    const response = await axiosWithAuth().delete(`${articlesUrl}/${article_id}`);
-
-    if (response.data.message === 'Article deleted successfully') {
-      const updatedArticles = articles.filter((item) => item.id !== article_id);
-      setArticles(updatedArticles);
-    }
-    setMessage(response.data.message);
-  } catch (error) {
-    setMessage('An error occurred while deleting the article.');
-  } finally {
-    setSpinnerOn(false);
-  }
-};
-
-useEffect(() => {
-  const fetchData = async () => {
-    await getArticles();
-  };
-
-  fetchData();
-}, []);
   return (
     <>
       {spinnerOn && <Spinner />}
@@ -177,13 +129,8 @@ useEffect(() => {
             path="articles"
             element={
               <>
-                <ArticleForm postArticle={postArticle} />
-                <Articles
-        articles={articles}
-        deleteArticle={deleteArticle}
-        updateArticle={updateArticle}
-        setCurrentArticleId={setCurrentArticleId}
-                />
+                <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId}/>
+                <Articles articles={articles} />
               </>
             }
           />

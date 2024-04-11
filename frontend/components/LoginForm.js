@@ -1,32 +1,27 @@
-import React, { useState } from 'react'
-import PT from 'prop-types'
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const initialFormValues = {
   username: '',
   password: '',
-}
+};
+
 const LoginForm = ({ login }) => {
-  const [values, setValues] = useState(initialFormValues)
-  // ✨ where are my props? Destructure them here
+  const [values, setValues] = useState(initialFormValues);
 
   const onChange = evt => {
-    const { id, value } = evt.target
-    setValues({ ...values, [id]: value })
-  }
+    const { id, value } = evt.target;
+    setValues({ ...values, [id]: value });
+  };
 
   const onSubmit = evt => {
-    evt.preventDefault()
-    // ✨ implement
-    login(values)
-  }
+    evt.preventDefault();
+    login(values);
+  };
 
   const isDisabled = () => {
-    // ✨ implement
-    // Trimmed username must be >= 3, and
-    // trimmed password must be >= 8 for
-    // the button to become enabled
-    return values.username.trim().length < 3 || values.password.trim().length < 8
-  }
+    return values.username.trim().length < 3 || values.password.trim().length < 8;
+  };
 
   return (
     <form id="loginForm" onSubmit={onSubmit}>
@@ -45,14 +40,15 @@ const LoginForm = ({ login }) => {
         placeholder="Enter password"
         id="password"
       />
-      <button disabled={isDisabled()} id="submitCredentials">Submit credentials</button>
+      <button disabled={isDisabled()} id="submitCredentials">
+        Submit credentials
+      </button>
     </form>
-  )
-}
+  );
+};
 
-// 🔥 No touchy: LoginForm expects the following props exactly:
 LoginForm.propTypes = {
-  login: PT.func.isRequired,
-}
+  login: PropTypes.func.isRequired,
+};
 
-export default LoginForm
+export default LoginForm;

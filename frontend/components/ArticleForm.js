@@ -1,61 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import PT from 'prop-types'
 
-const initialFormValues = { title: '', text: '', topic: '' }
+const initialFormValues = { title: '', text: '', topic: '' };
 
-export default function ArticleForm({ postArticle, updateArticle, setCurrentArticleId, currentArticle }) {
+const ArticleForm = ({ postArticle, updateArticle, currentArticle, setCurrentArticleId }) => {
   const [values, setValues] = useState(initialFormValues);
-  // ✨ where are my props? Destructure them here
 
   useEffect(() => {
-    // ✨ implement
-    // Every time the `currentArticle` prop changes, we should check it for truthiness:
-    // if it's truthy, we should set its title, text and topic into the corresponding
-    // values of the form. If it's not, we should reset the form back to initial values.
     if (currentArticle) {
-      // Populate form fields with current article details
-      setValues({
-        title: currentArticle.title,
-        text: currentArticle.text,
-        topic: currentArticle.topic,
-      });
+      setValues(currentArticle); // Set form values if editing existing article
     } else {
-      // Reset form fields to initial values
-      setValues(initialFormValues);
+      setValues(initialFormValues); // Reset form values if creating new article
     }
   }, [currentArticle]);
 
   const onChange = evt => {
-    const { id, value } = evt.target
-    setValues({ ...values, [id]: value })
-  }
+    const { id, value } = evt.target;
+    setValues({ ...values, [id]: value });
+  };
 
   const onSubmit = evt => {
-    evt.preventDefault()
-    // ✨ implement
-    // We must submit a new post or update an existing one,
-    // depending on the truthyness of the `currentArticle` prop.
+    evt.preventDefault();
+    // Determine whether to post a new article or update an existing one
     if (currentArticle) {
-      // If currentArticle exists, update the article
       updateArticle({ article_id: currentArticle.article_id, article: values });
     } else {
-      // If currentArticle doesn't exist, post a new article
       postArticle(values);
     }
-    // Reset the form and current article id
+    // Reset form values and current article id
     setValues(initialFormValues);
     setCurrentArticleId(null);
   };
 
   const isDisabled = () => {
-    // ✨ implement
-    // Make sure the inputs have some values
-    return !values.title || !values.text || !values.topic;
+    // Implement logic to determine if form submission should be disabled
+    return values.title.trim().length === 0 || values.text.trim().length === 0 || values.topic.trim().length === 0;
   };
 
   return (
-    // ✨ fix the JSX: make the heading display either "Edit" or "Create"
-    // and replace Function.prototype with the correct function
     <form id="form" onSubmit={onSubmit}>
       <h2>{currentArticle ? 'Edit Article' : 'Create Article'}</h2>
       <input
@@ -84,7 +66,8 @@ export default function ArticleForm({ postArticle, updateArticle, setCurrentArti
       </div>
     </form>
   );
-}
+};
+
 
 // 🔥 No touchy: ArticleForm expects the following props exactly:
 ArticleForm.propTypes = {
@@ -96,5 +79,8 @@ ArticleForm.propTypes = {
     title: PT.string.isRequired,
     text: PT.string.isRequired,
     topic: PT.string.isRequired,
-  })
+  }),
+  setCurrentArticleId: PT.func.isRequired,
 }
+
+export default ArticleForm;

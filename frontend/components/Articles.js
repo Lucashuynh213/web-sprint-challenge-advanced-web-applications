@@ -1,14 +1,10 @@
-import React, { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
-import PT from 'prop-types'
-import { axiosWithAuth } from '../axios/index'
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import PT from 'prop-types';
+import { axiosWithAuth } from '../axios/index';
 
 const Articles = ({ articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId }) => {
-  useEffect(() => {
-    // Fetch articles on initial render
-    fetchArticles();
-  }, []); // Run this effect whenever getArticles changes
-
+  
   const fetchArticles = () => {
     axiosWithAuth()
       .get('http://localhost:9000/api/articles')
@@ -24,6 +20,11 @@ const Articles = ({ articles, getArticles, deleteArticle, setCurrentArticleId, c
         }
       });
   };
+
+  useEffect(() => {
+    // Fetch articles on initial render
+    fetchArticles();
+  }, []); // Run this effect whenever getArticles changes
 
   // If no token exists, render a Navigate to the login screen
   if (!localStorage.getItem('token')) {
