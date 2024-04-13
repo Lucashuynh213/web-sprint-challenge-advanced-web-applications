@@ -16,7 +16,7 @@ const LoginForm = ({ login }) => {
 
   const onSubmit = evt => {
     evt.preventDefault();
-    login(values);
+    login(values); // Trigger the login function with form values
   };
 
   const isDisabled = () => {

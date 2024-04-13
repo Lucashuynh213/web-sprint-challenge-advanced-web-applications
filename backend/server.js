@@ -22,7 +22,7 @@ server.post('/api/login', async (req, res, next) => {
 })
 // 2
 server.get('/api/articles', async (req, res) => {
-  const token = req.headers.authorization
+  const token = req.headers.authorization.split(' ')[1]
   const [status, payload] = await help.getArticles(token)
   setTimeout(() => {
     res.status(status).json(payload)
@@ -30,7 +30,7 @@ server.get('/api/articles', async (req, res) => {
 })
 // 3
 server.post('/api/articles', async (req, res) => {
-  const token = req.headers.authorization
+  const token = req.headers.authorization.split(' ')[1]
   const [status, payload] = await help.postArticle(token, req.body)
   setTimeout(() => {
     res.status(status).json(payload)
@@ -38,7 +38,7 @@ server.post('/api/articles', async (req, res) => {
 })
 // 4
 server.put('/api/articles/:article_id', async (req, res) => {
-  const token = req.headers.authorization
+  const token = req.headers.authorization.split(' ')[1]
   const [status, payload] = await help.updateArticle(token, req.body, req.params.article_id)
   setTimeout(() => {
     res.status(status).json(payload)
@@ -46,7 +46,7 @@ server.put('/api/articles/:article_id', async (req, res) => {
 })
 // 5
 server.delete('/api/articles/:article_id', async (req, res) => {
-  const token = req.headers.authorization
+  const token = req.headers.authorization.split(' ')[1]
   const [status, payload] = await help.deleteArticle(token, req.params.article_id)
   setTimeout(() => {
     res.status(status).json(payload)

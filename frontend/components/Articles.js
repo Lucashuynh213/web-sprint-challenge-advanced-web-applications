@@ -5,6 +5,11 @@ import { axiosWithAuth } from '../axios/index';
 
 const Articles = ({ articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId }) => {
   
+  const handleDelete = (article_id) => {
+    // Call the deleteArticle function with the article_id
+    deleteArticle(article_id);
+  };
+
   const fetchArticles = () => {
     axiosWithAuth()
       .get('http://localhost:9000/api/articles')
@@ -31,29 +36,27 @@ const Articles = ({ articles, getArticles, deleteArticle, setCurrentArticleId, c
     return <Navigate to="/" />;
   }
 
-  return (
+   return (
     <div className="articles">
       <h2>Articles</h2>
-      {
-        articles.length === 0
-          ? 'No articles yet'
-          : articles.map(art => (
-            <div className="article" key={art.article_id}>
-              <div>
-                <h3>{art.title}</h3>
-                <p>{art.text}</p>
-                <p>Topic: {art.topic}</p>
-              </div>
-              <div>
-                <button onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
-                <button onClick={() => deleteArticle(art.article_id)}>Delete</button>
-              </div>
+      {articles.length === 0 ? 'No articles yet' : (
+        articles.map(art => (
+          <div className="article" key={art.article_id}>
+            <div>
+              <h3>{art.title}</h3>
+              <p>{art.text}</p>
+              <p>Topic: {art.topic}</p>
             </div>
-          ))
-      }
+            <div>
+              <button onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
+              <button onClick={() => handleDelete(art.article_id)}>Delete</button>
+            </div>
+          </div>
+        ))
+      )}
     </div>
-  )
-}
+  );
+};
 
 // 🔥 No touchy: Articles expects the following props exactly:
 Articles.propTypes = {

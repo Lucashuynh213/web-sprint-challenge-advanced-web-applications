@@ -16,6 +16,16 @@ export default function App() {
   const [spinnerOn, setSpinnerOn] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token && window.location.pathname !== '/') {
+      navigate('/');
+    } else {
+      getArticles();
+    }
+  }, [navigate]);
+
+
   const postArticle = async (article) => {
     try {
       const token = localStorage.getItem('token');
@@ -98,17 +108,59 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await getArticles();
-    };
+  const deleteArticle = async (articleId) => {
+    setMessage('');
+    setSpinnerOn(true);
+  
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axiosWithAuth().delete(`${articlesUrl}/${articleId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+  
+      if (response.data.message === 'Article deleted successfully') {
+        // Update articles state to remove the deleted article
+        setArticles(articles.filter(article => article.article_id !== articleId));
+        setMessage('Article deleted successfully');
+      } else {
+        setMessage(response.data.message);
+      }
+    } catch (error) {
+      setMessage('An error occurred while deleting the article.');
+    } finally {
+      setSpinnerOn(false);
+    }
+  };
 
-    fetchData();
-  }, []);
+  const updateArticle = async ({ articleId, updatedArticle }) => {
+    setMessage('');
+    setSpinnerOn(true);
+  
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axiosWithAuth().put(`${articlesUrl}/${articleId}`, updatedArticle, {
+        headers: {
+          Authorization: token,
+        },
+      });
+  
+      if (response.data.article) {
+        // Update articles state with the updated article
+        setArticles(articles.map(article => (article.article_id === articleId ? response.data.article : article)));
+      }
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage('An error occurred while updating the article.');
+    } finally {
+      setSpinnerOn(false);
+    }
+  };
 
   return (
     <>
-      {spinnerOn && <Spinner />}
+       <Spinner on={spinnerOn} />
       {message && <Message message={message} />}
       <button id="logout" onClick={logout}>
         Logout from app
@@ -129,9 +181,9 @@ export default function App() {
             path="articles"
             element={
               <>
-                <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId}/>
-                <Articles articles={articles} />
-              </>
+              <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId} updateArticle={updateArticle}/>
+              <Articles articles={articles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} getArticles={getArticles}  />
+            </>
             }
           />
         </Routes>

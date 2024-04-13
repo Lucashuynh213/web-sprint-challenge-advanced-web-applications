@@ -12,7 +12,7 @@ async function login(req, res, ctx) {
 }
 // 2
 async function getArticles(req, res, ctx) {
-  const token = req.headers.get('authorization')
+  const token = req.get('authorization')?.split(' ')[1]
   const [status, payload] = await help.getArticles(token)
   return res(
     ctx.status(status),
@@ -21,7 +21,7 @@ async function getArticles(req, res, ctx) {
 }
 // 3
 async function postArticle(req, res, ctx) {
-  const token = req.headers.get('authorization')
+  const token = req.get('authorization')?.split(' ')[1]
   const [status, payload] = await help.postArticle(token, req.body)
   return res(
     ctx.status(status),
@@ -30,7 +30,7 @@ async function postArticle(req, res, ctx) {
 }
 // 4
 async function updateArticle(req, res, ctx) {
-  const token = req.headers.get('authorization')
+  const token = req.get('authorization')?.split(' ')[1]
   const [status, payload] = await help.updateArticle(token, req.body, req.params.article_id)
   return res(
     ctx.status(status),
@@ -39,7 +39,7 @@ async function updateArticle(req, res, ctx) {
 }
 // 5
 async function deleteArticle(req, res, ctx) {
-  const token = req.headers.get('authorization')
+  const token = req.get('authorization')?.split(' ')[1]
   const [status, payload] = await help.deleteArticle(token, req.params.article_id)
   return res(
     ctx.status(status),
