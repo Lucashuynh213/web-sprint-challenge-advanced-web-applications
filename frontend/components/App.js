@@ -14,6 +14,7 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [articles, setArticles] = useState([]);
   const [spinnerOn, setSpinnerOn] = useState(false);
+  const [currentArticleId, setCurrentArticleId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,26 +26,34 @@ export default function App() {
     }
   }, [navigate]);
 
+  const getArticles = async () => {
+    setMessage('');
+    setSpinnerOn(true);
 
-  const postArticle = async (article) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:9000/api/articles', article, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      // Handle the response here
-      console.log(response.data);
+      
+      const response = await axiosWithAuth().get(articlesUrl);
+
+      if (response.data.articles) {
+        setArticles(response.data.articles);
+        setMessage(response.data.message);
+      } else {
+        redirectToLogin();
+      }
     } catch (error) {
-      // Handle errors here
-      console.error('Error posting article:', error);
+      if (error.response && error.response.status === 401) {
+        redirectToLogin();
+      } else {
+        setMessage('An error occurred while fetching articles.');
+      }
+    } finally {
+      setSpinnerOn(false);
     }
   };
 
-  const setCurrentArticleId = (id) => {
-    // Implement the logic to set the current article ID
-  };
+  const handleSetCurrentArticleId = (id) => {
+    setCurrentArticleId(id);
+  }
 
   const redirectToLogin = () => {
     navigate('/');
@@ -84,29 +93,24 @@ export default function App() {
     }
   };
 
-  const getArticles = async () => {
-    setMessage('');
-    setSpinnerOn(true);
 
-    try {
-      const response = await axiosWithAuth().get(articlesUrl);
+  const postArticle = async (article) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axiosWithAuth().post('articles', article, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // Handle the response here
+    console.log(response.data);
+  } catch (error) {
+    // Handle errors here
+    console.error('Error posting article:', error);
+  }
+};
 
-      if (response.data.articles) {
-        setArticles(response.data.articles);
-        setMessage(response.data.message);
-      } else {
-        redirectToLogin();
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        redirectToLogin();
-      } else {
-        setMessage('An error occurred while fetching articles.');
-      }
-    } finally {
-      setSpinnerOn(false);
-    }
-  };
+  
 
   const deleteArticle = async (articleId) => {
     setMessage('');
@@ -116,7 +120,7 @@ export default function App() {
       const token = localStorage.getItem('token');
       const response = await axiosWithAuth().delete(`${articlesUrl}/${articleId}`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
   
@@ -142,7 +146,7 @@ export default function App() {
       const token = localStorage.getItem('token');
       const response = await axiosWithAuth().put(`${articlesUrl}/${articleId}`, updatedArticle, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
   
@@ -182,7 +186,7 @@ export default function App() {
             element={
               <>
               <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId} updateArticle={updateArticle}/>
-              <Articles articles={articles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} getArticles={getArticles}  />
+              <Articles articles={articles} deleteArticle={deleteArticle}  getArticles={getArticles}  />
             </>
             }
           />

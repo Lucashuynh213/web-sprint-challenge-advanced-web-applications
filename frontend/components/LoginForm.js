@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import PT from 'prop-types';
 
 const initialFormValues = {
   username: '',
@@ -32,6 +32,7 @@ const LoginForm = ({ login }) => {
         onChange={onChange}
         placeholder="Enter username"
         id="username"
+        autoComplete="username"
       />
       <input
         maxLength={20}
@@ -39,6 +40,7 @@ const LoginForm = ({ login }) => {
         onChange={onChange}
         placeholder="Enter password"
         id="password"
+        autoComplete="current-password"
       />
       <button disabled={isDisabled()} id="submitCredentials">
         Submit credentials
@@ -48,7 +50,7 @@ const LoginForm = ({ login }) => {
 };
 
 LoginForm.propTypes = {
-  login: PropTypes.func.isRequired,
+  login: PT.func.isRequired,
 };
 
 export default LoginForm;
