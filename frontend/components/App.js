@@ -14,7 +14,6 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [articles, setArticles] = useState([]);
   const [spinnerOn, setSpinnerOn] = useState(false);
-  const [currentArticleId, setCurrentArticleId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,9 +50,9 @@ export default function App() {
     }
   };
 
-  const handleSetCurrentArticleId = (id) => {
-    setCurrentArticleId(id);
-  }
+const setCurrentArticleId = (id) => {
+    // Implement the logic to set the current article ID
+  };
 
   const redirectToLogin = () => {
     navigate('/');
@@ -186,7 +185,7 @@ export default function App() {
             element={
               <>
               <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId} updateArticle={updateArticle}/>
-              <Articles articles={articles} deleteArticle={deleteArticle}  getArticles={getArticles}  />
+              <Articles articles={articles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} getArticles={getArticles}  />
             </>
             }
           />
