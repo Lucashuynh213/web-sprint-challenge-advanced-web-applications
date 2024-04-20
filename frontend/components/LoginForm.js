@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PT from 'prop-types';
 
 const initialFormValues = {
-  usernameIn: '',
+  username: '',
   password: '',
 };
 
@@ -40,7 +40,7 @@ const LoginForm = ({ login }) => {
         onChange={onChange}
         placeholder="Enter password"
         id="password"
-        autoComplete="current-password"
+          autoComplete="current-password"
       />
       <button disabled={isDisabled()} id="submitCredentials">
         Submit credentials
