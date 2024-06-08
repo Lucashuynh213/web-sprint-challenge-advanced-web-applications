@@ -1,66 +1,43 @@
-import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import PT from 'prop-types';
-import { axiosWithAuth } from '../axios/index';
+import React, { useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
+import PT from 'prop-types'
 
-const Articles = ({ articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId }) => {
-  
-  const handleDelete = (article_id) => {
-    // Call the deleteArticle function with the article_id
-    deleteArticle(article_id);
-  };
-
-  const fetchArticles = () => {
-    axiosWithAuth()
-      .get('http://localhost:9000/api/articles')
-      .then((response) => {
-        getArticles(response.data); // Update articles state with fetched data
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          // Redirect to login if token is invalid or expired
-          return <Navigate to="/" />;
-        } else {
-          console.error('Error fetching articles:', error);
-        }
-      });
-  };
+export default function Articles({ articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId }) {
+  const token = localStorage.getItem('token')
+  if (!token) return <Navigate to="/" />
 
   useEffect(() => {
-    // Fetch articles on initial render
-    fetchArticles();
-  }, []); // Run this effect whenever getArticles changes
+    getArticles()
+  }, [getArticles])
 
-  // If no token exists, render a Navigate to the login screen
-  if (!localStorage.getItem('token')) {
-    return <Navigate to="/" />;
-  }
-
-   return (
+  return (
     <div className="articles">
       <h2>Articles</h2>
-      {articles.length === 0 ? 'No articles yet' : (
-        articles.map(art => (
-          <div className="article" key={art.article_id}>
-            <div>
-              <h3>{art.title}</h3>
-              <p>{art.text}</p>
-              <p>Topic: {art.topic}</p>
-            </div>
-            <div>
-              <button onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
-              <button onClick={() => handleDelete(art.article_id)}>Delete</button>
-            </div>
-          </div>
-        ))
-      )}
+      {
+        !articles.length
+          ? 'No articles yet'
+          : articles.map(art => {
+            return (
+              <div className="article" key={art.article_id}>
+                <div>
+                  <h3>{art.title}</h3>
+                  <p>{art.text}</p>
+                  <p>Topic: {art.topic}</p>
+                </div>
+                <div>
+                  <button onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
+                  <button onClick={() => deleteArticle(art.article_id)}>Delete</button>
+                </div>
+              </div>
+            )
+          })
+      }
     </div>
-  );
-};
+  )
+}
 
-// 🔥 No touchy: Articles expects the following props exactly:
 Articles.propTypes = {
-  articles: PT.arrayOf(PT.shape({ // the array can be empty
+  articles: PT.arrayOf(PT.shape({
     article_id: PT.number.isRequired,
     title: PT.string.isRequired,
     text: PT.string.isRequired,
@@ -69,7 +46,5 @@ Articles.propTypes = {
   getArticles: PT.func.isRequired,
   deleteArticle: PT.func.isRequired,
   setCurrentArticleId: PT.func.isRequired,
-  currentArticleId: PT.number, // can be undefined or null
+  currentArticleId: PT.number,
 }
-
-export default Articles

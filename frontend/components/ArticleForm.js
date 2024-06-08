@@ -1,45 +1,41 @@
 import React, { useEffect, useState } from 'react'
 import PT from 'prop-types'
 
-const initialFormValues = { title: '', text: '', topic: '' };
+const initialFormValues = { title: '', text: '', topic: '' }
 
-const ArticleForm = ({ postArticle, updateArticle, currentArticle, setCurrentArticleId }) => {
-  const [values, setValues] = useState(initialFormValues);
+export default function ArticleForm({ postArticle, updateArticle, setCurrentArticleId, currentArticle }) {
+  const [values, setValues] = useState(initialFormValues)
 
   useEffect(() => {
     if (currentArticle) {
-      setValues(currentArticle); // Set form values if editing existing article
+      setValues(currentArticle)
     } else {
-      setValues(initialFormValues); // Reset form values if creating new article
+      setValues(initialFormValues)
     }
-  }, [currentArticle]);
+  }, [currentArticle])
 
   const onChange = evt => {
-    const { id, value } = evt.target;
-    setValues({ ...values, [id]: value });
-  };
+    const { id, value } = evt.target
+    setValues({ ...values, [id]: value })
+  }
 
   const onSubmit = evt => {
-    evt.preventDefault();
-    // Determine whether to post a new article or update an existing one
+    evt.preventDefault()
     if (currentArticle) {
-      updateArticle({ article_id: currentArticle.article_id, article: values });
+      updateArticle({ article_id: currentArticle.article_id, article: values })
     } else {
-      postArticle(values);
+      postArticle(values)
     }
-    // Reset form values and current article id
-    setValues(initialFormValues);
-    setCurrentArticleId(null);
-  };
+    setCurrentArticleId(null)
+  }
 
   const isDisabled = () => {
-    // Implement logic to determine if form submission should be disabled
-    return values.title.trim().length === 0 || values.text.trim().length === 0 || values.topic.trim().length === 0;
-  };
+    return !values.title.trim() || !values.text.trim() || !values.topic.trim()
+  }
 
   return (
     <form id="form" onSubmit={onSubmit}>
-      <h2>{currentArticle ? 'Edit Article' : 'Create Article'}</h2>
+      <h2>{currentArticle ? "Edit" : "Create"} Article</h2>
       <input
         maxLength={50}
         onChange={onChange}
@@ -62,25 +58,20 @@ const ArticleForm = ({ postArticle, updateArticle, currentArticle, setCurrentArt
       </select>
       <div className="button-group">
         <button disabled={isDisabled()} id="submitArticle">Submit</button>
-        <button onClick={() => setCurrentArticleId(null)}>Cancel edit</button>
+        <button type="button" onClick={() => setCurrentArticleId(null)}>Cancel edit</button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-
-// 🔥 No touchy: ArticleForm expects the following props exactly:
 ArticleForm.propTypes = {
   postArticle: PT.func.isRequired,
   updateArticle: PT.func.isRequired,
   setCurrentArticleId: PT.func.isRequired,
-  currentArticle: PT.shape({ // can be null or undefined, meaning "create" mode (as opposed to "update")
+  currentArticle: PT.shape({
     article_id: PT.number.isRequired,
     title: PT.string.isRequired,
     text: PT.string.isRequired,
     topic: PT.string.isRequired,
-  }),
-  setCurrentArticleId: PT.func.isRequired,
+  })
 }
-
-export default ArticleForm;

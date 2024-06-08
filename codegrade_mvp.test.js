@@ -53,26 +53,26 @@ const loginFlow = async () => {
 
 describe('Advanced Applications', () => {
   describe('Login', () => {
-    // test(`[1] Submit credentials button is disabled until
-    //     - username (after trimming) is at least 3 chars AND
-    //     - password (after trimming) is at least 8 chars
-    //     - Review how to conditionally disable a button element.`, () => {
-    //   expect(loginBtn()).toBeDisabled()
-    //   fireEvent.change(usernameInput(), { target: { value: ' 12 ' } })
-    //   fireEvent.change(passwordInput(), { target: { value: ' 1234567 ' } })
-    //   expect(loginBtn()).toBeDisabled()
-    //   fireEvent.change(usernameInput(), { target: { value: ' 123 ' } })
-    //   fireEvent.change(passwordInput(), { target: { value: ' 12345678 ' } })
-    //   expect(loginBtn()).toBeEnabled()
-    // })
-    // test(`[2] Attempting to navigate to Articles
-    //     - renders a redirect back to login screen
-    //     - articles form never 
-    //     - Review how to implement protected routes using an authentication token and redirect users.`, () => {
-    //   fireEvent.click(articlesLink())
-    //   expect(titleInput()).not.toBeInTheDocument()
-    //   expect(usernameInput()).toBeInTheDocument()
-    // })
+    test(`[1] Submit credentials button is disabled until
+        - username (after trimming) is at least 3 chars AND
+        - password (after trimming) is at least 8 chars
+        - Review how to conditionally disable a button element.`, () => {
+      expect(loginBtn()).toBeDisabled()
+      fireEvent.change(usernameInput(), { target: { value: ' 12 ' } })
+      fireEvent.change(passwordInput(), { target: { value: ' 1234567 ' } })
+      expect(loginBtn()).toBeDisabled()
+      fireEvent.change(usernameInput(), { target: { value: ' 123 ' } })
+      fireEvent.change(passwordInput(), { target: { value: ' 12345678 ' } })
+      expect(loginBtn()).toBeEnabled()
+    })
+    test(`[2] Attempting to navigate to Articles
+        - renders a redirect back to login screen
+        - articles form never 
+        - Review how to implement protected routes using an authentication token and redirect users.`, () => {
+      fireEvent.click(articlesLink())
+      expect(titleInput()).not.toBeInTheDocument()
+      expect(usernameInput()).toBeInTheDocument()
+    })
     test(`[3] Filling out the login form and submitting
         - article titles, texts, topics render on the page
         - success message renders on the page
