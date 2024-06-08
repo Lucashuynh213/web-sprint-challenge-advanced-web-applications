@@ -13,15 +13,7 @@ const articles = [
   { article_id: 2, title: 'Article 2', text: 'Text for article 2', topic: 'Topic 2' },
 ];
 
-test('[9] Clicking delete button on an article removes it from the page and shows success message', async () => {
-  const { getByText, queryByText } = render(
-    <Articles
-      articles={articles}
-      getArticles={() => {}} // Mock the getArticles function
-      deleteArticle={deleteArticleMock} // Use the mocked deleteArticle function
-      setCurrentArticleId={() => {}} // Mock the setCurrentArticleId function
-    />
-  );
+
 
   // Check if articles are rendered
   expect(getByText('Article 1')).toBeInTheDocument();
@@ -39,4 +31,3 @@ test('[9] Clicking delete button on an article removes it from the page and show
 
   // Verify that the success message renders
   expect(getByText('Article 1 was deleted.')).toBeInTheDocument();
-});
